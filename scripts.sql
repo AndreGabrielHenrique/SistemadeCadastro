@@ -1,0 +1,4 @@
+SELECT * FROM usuarios;
+
+SELECT * FROM usuarios ORDER BY id DESC;
+SELECT COUNT(*) FROM usuarios ORDER BY id DESC;
