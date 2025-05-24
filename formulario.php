@@ -4,8 +4,20 @@
     if(isset($_POST['submit'])) {
         /*
         Trecho comentado para debug (exibe todos os dados do formulário):
-        print_r('Nome: ' . $_POST['nome']);
-        ...
+        print_r('Nome: ' . $_POST['nome']);// print_r('<br>');
+        print_r('E-mail: ' . $_POST['email']);
+        print_r('<br>');
+        print_r('Telefone: ' . $_POST['telefone']);
+        print_r('<br>');
+        print_r('Sexo: ' . $_POST['genero']);
+        print_r('<br>');
+        print_r('Data de Nascimento: ' . $_POST['data_nascimento']);
+        print_r('<br>');
+        print_r('Cidade: ' . $_POST['cidade']);
+        print_r('<br>');
+        print_r('Estado: ' . $_POST['estado']);
+        print_r('<br>');
+        print_r('Endereço: ' . $_POST['endereco']);
         */
 
         include_once('config.php'); // Conexão com o banco de dados
@@ -22,7 +34,8 @@
         $endereco = $_POST['endereco'];       // Endereço completo
 
         // Query SQL para inserir dados no banco
-        $resultado = mysqli_query($conexao, "INSERT INTO usuarios(...) VALUES (...)");
+        $resultado = mysqli_query($conexao, "INSERT INTO usuarios(nome, email, senha, telefone, genero, data_nascimento, cidade, estado, endereco)
+        VALUES ('$nome', '$email', '$senha', '$telefone', '$genero', '$data_nascimento', '$cidade', '$estado', '$endereco')");
 
         // Redireciona para a página do painel de sistema após cadastro
         header('Location: sistema.php');
