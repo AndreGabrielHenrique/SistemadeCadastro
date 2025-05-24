@@ -28,6 +28,8 @@
     }
 
     $resultado = $conexao->query($sql); // Executa a query no banco
+
+    header('Content-Type: text/html; charset=utf-8'); // Define o tipo de conteúdo como HTML com charset UTF-8
 ?>
 
 <!DOCTYPE html>

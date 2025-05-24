@@ -1,4 +1,4 @@
-<!-- home.php  -->
+<!-- index.php  -->
 <?php
     session_start(); // Inicia a sessão
 

@@ -79,7 +79,7 @@
 </head>
 <body>
     <!-- Link de retorno -->
-    <a href="home.php">Voltar</a>
+    <a href="index.php">Voltar</a>
     
     <!-- Container do formulário -->
     <div>
