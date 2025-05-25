@@ -1,5 +1,7 @@
 <!-- formulario.php -->
 <?php
+    session_start(); // Inicia a sessão no TOPO do arquivo
+
     // Verifica se o formulário foi submetido
     if(isset($_POST['submit'])) {
         /*
@@ -38,7 +40,24 @@
         VALUES ('$nome', '$email', '$senha', '$telefone', '$genero', '$data_nascimento', '$cidade', '$estado', '$endereco')");
 
         // Redireciona para a página do painel de sistema após cadastro
-        header('Location: sistema.php');
+        if($resultado) {
+            // Busca o último ID inserido
+            $novo_id = mysqli_insert_id($conexao);
+            
+            // Cria a sessão do usuário
+            $_SESSION['logged_in'] = true;
+            $_SESSION['user_id'] = $novo_id;
+            $_SESSION['user_email'] = $email;
+            $_SESSION['user_name'] = $nome;
+            
+            header('Location: sistema.php');
+            exit();
+        } else {
+            // Tratamento de erro
+            $_SESSION['cadastro_erro'] = "Erro no cadastro!";
+            header('Location: formulario.php');
+            exit();
+        }
     }
 ?>
 
