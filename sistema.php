@@ -4,32 +4,59 @@
     include_once('config.php'); // Inclui arquivo de configuração do banco
     
     // Verifica se o usuário NÃO está logado
-    if(!isset($_SESSION['email']) && !isset($_SESSION['senha'])) {
-        unset($_SESSION['email']); // Remove variável de e-mail da sessão
-        unset($_SESSION['senha']); // Remove variável de senha da sessão
-        header('Location: login.php'); // Redireciona para login
+    if(!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
+        session_destroy(); // Destrói todos os dados da sessão
+        header('Location: index.php'); // Redireciona para index
+        exit(); // Encerra a execução do script
     }
 
-    $logado = $_SESSION['email']; // Armazena o e-mail do usuário logado
+    $logado = $_SESSION['email_usuario']; // Armazena o e-mail do usuário logado
 
     // Verifica se há parâmetro de busca na URL
-    if(!empty($_GET['busca'])) {
-        $busca = $_GET['busca']; // Obtém o valor da busca
-        // Cria query com filtro de pesquisa
-        $sql = "SELECT * FROM usuarios 
-               WHERE id LIKE '%$busca%' 
-               OR nome LIKE '%$busca%' 
-               OR email LIKE '%$busca%' 
-               ORDER BY id DESC"; 
-    }
-    else {
-        // Cria query padrão sem filtros
-        $sql = "SELECT * FROM usuarios ORDER BY id DESC";
+    $busca = isset($_GET['busca']) ? $_GET['busca'] : '';
+
+    // Lógica de busca corrigida (com tratamento de erros)
+    if(!empty($busca)) {
+        // Adiciona wildcards ao termo de busca
+        $termo = "%" . $busca . "%";
+        
+        // Query COM busca usando prepared statement
+        $stmt = $conexao->prepare("
+            SELECT * FROM usuarios 
+            WHERE 
+                id LIKE ? OR 
+                nome LIKE ? OR 
+                email LIKE ? OR 
+                telefone LIKE ? OR 
+                genero LIKE ? OR
+                data_nascimento LIKE ? OR
+                cidade LIKE ? OR
+                estado LIKE ? OR
+                endereco LIKE ? 
+            ORDER BY id DESC
+        ");
+        
+        // Vincula os parâmetros corretamente
+        $stmt->bind_param(
+            "sssssssss", 
+            $termo, $termo, $termo, 
+            $termo, $termo, $termo, 
+            $termo, $termo, $termo
+        );
+    } else {
+        // Query SEM busca
+        $stmt = $conexao->prepare("SELECT * FROM usuarios ORDER BY id DESC");
     }
 
-    $resultado = $conexao->query($sql); // Executa a query no banco
+    // Executa e verifica erros
+    if(!$stmt->execute()) {
+        die("Erro na busca: " . $stmt->error); // Exibe erro detalhado
+    }
+    
+    $resultado = $stmt->get_result(); // Obtém resultados
+    $stmt->close(); // Fecha a statement
 
-    header('Content-Type: text/html; charset=utf-8'); // Define o tipo de conteúdo como HTML com charset UTF-8
+    header('Content-Type: text/html; charset=utf-8'); // Define charset
 ?>
 
 <!DOCTYPE html>
@@ -51,7 +78,8 @@
         body {
             background: linear-gradient(to right, rgb(20, 147, 220), rgb(17, 54, 71)) no-repeat fixed;
             color: white;
-            overflow: hidden; /* Desabilita scrollbars padrão */
+            overflow-y: auto; /* Habilita scroll vertical */
+            overflow-x: hidden; /* Desabilita scroll horizontal */
         }
         
         /* Estilização da barra de navegação */
@@ -63,10 +91,19 @@
         /* Container da tabela com scroll */
         .table-container {
             height: calc(100vh - 180px); /* Calcula altura dinâmica */
-            overflow: auto; /* Habilita scroll quando necessário */
+            overflow: auto; /* Habilita scroll vertical e horizontal */
             margin: 20px; /* Margem externa */
+
+            /* Esconde a barra de scroll */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
         }
-        
+
+        /* Esconde scrollbar para WebKit (Chrome, Safari, Opera) */
+        body::-webkit-scrollbar, .table-container::-webkit-scrollbar {
+            display: none;
+        }
+
         /* Estilização do fundo da tabela */
         .table-bg {
             background-color: rgba(0, 0, 0, .3); /* Cor de fundo semi-transparente */
@@ -219,8 +256,7 @@
                 <tr>
                     <!-- Cabeçalhos das colunas -->
                     <th scope="col">#</th> <!-- ID -->
-                    <th scope="col">Nome</th> 
-                    <th scope="col">Senha</th>
+                    <th scope="col">Nome</th>
                     <th scope="col">E-mail</th>
                     <th scope="col">Telefone</th>
                     <th scope="col">Sexo</th>
@@ -240,7 +276,6 @@
                         // Exibe cada campo do usuário
                         echo "<td>" . $dados_usuario['id'] . "</td>"; // ID
                         echo "<td>" . $dados_usuario['nome'] . "</td>"; // Nome
-                        echo "<td>" . $dados_usuario['senha'] . "</td>"; // Senha
                         echo "<td>" . $dados_usuario['email'] . "</td>"; // E-mail
                         echo "<td>" . $dados_usuario['telefone'] . "</td>"; // Telefone
                         echo "<td>" . $dados_usuario['genero'] . "</td>"; // Gênero

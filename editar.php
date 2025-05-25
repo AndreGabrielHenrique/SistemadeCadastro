@@ -8,11 +8,11 @@
         // Armazena o ID recebido da URL
         $id = $_GET['id'];
 
-        // Query SQL para selecionar o usuário com o ID especificado
-        $selecionarSql = "SELECT * FROM usuarios WHERE id = $id";
-
-        // Executa a query no banco de dados
-        $resultado = $conexao->query($selecionarSql);
+        // Query SQL segura usando prepared statement
+        $stmt = $conexao->prepare("SELECT * FROM usuarios WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
 
         // Linha comentada para debug (exibir resultado bruto da query)
         // print_r($resultado);
@@ -288,7 +288,7 @@
                 <br><br>
                 <!-- Campo Senha -->
                 <div class="inputBox">
-                    <input type="text" name="senha" id="senha" class="inputUser"  value="<?php echo $senha; ?>" required>
+                    <input type="password" name="senha" id="senha" class="inputUser" value="<?php echo $senha; ?>" required>
                     <label for="senha" class="labelInput">Senha</label>
                 </div>
                 <br><br>

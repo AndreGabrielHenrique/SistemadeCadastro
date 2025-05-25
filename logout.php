@@ -1,6 +1,8 @@
 <!-- logout.php -->
 <?php
     session_start(); // Inicia a sessão
-    unset($_SESSION['email']); // Remove e-mail da sessão
-    unset($_SESSION['senha']); // Remove senha da sessão
-    header('Location: index.php'); // Redireciona para index
+    session_unset(); // Remove todas as variáveis de sessão
+    session_destroy(); // Destrói a sessão
+    header('Location: index.php'); // Redireciona para a página inicial
+    exit(); // Encerra o script
+?>

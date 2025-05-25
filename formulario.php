@@ -2,6 +2,12 @@
 <?php
     session_start(); // Inicia a sessão no TOPO do arquivo
 
+    // Verifica se o usuário está logado usando o padrão unificado
+    if(isset($_SESSION['logado']) && $_SESSION['logado'] === true) {
+        header('Location: sistema.php'); // Redireciona para o sistema
+        exit(); // Interrompe a execução
+    }
+
     // Verifica se o formulário foi submetido
     if(isset($_POST['submit'])) {
         /*
@@ -35,29 +41,69 @@
         $estado = $_POST['estado'];           // Estado do usuário
         $endereco = $_POST['endereco'];       // Endereço completo
 
-        // Query SQL para inserir dados no banco
-        $resultado = mysqli_query($conexao, "INSERT INTO usuarios(nome, email, senha, telefone, genero, data_nascimento, cidade, estado, endereco)
-        VALUES ('$nome', '$email', '$senha', '$telefone', '$genero', '$data_nascimento', '$cidade', '$estado', '$endereco')");
+        // =================================================================
+        // NOVO CÓDIGO COM PREPARED STATEMENT (SEGURO CONTRA SQL INJECTION)
+        // =================================================================
+        $sql = "INSERT INTO usuarios(
+                    nome, 
+                    email, 
+                    senha, 
+                    telefone, 
+                    genero, 
+                    data_nascimento, 
+                    cidade, 
+                    estado, 
+                    endereco
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"; // 9 placeholders
 
-        // Redireciona para a página do painel de sistema após cadastro
-        if($resultado) {
-            // Busca o último ID inserido
-            $novo_id = mysqli_insert_id($conexao);
+        // Prepara a declaração
+        $stmt = mysqli_prepare($conexao, $sql);
+        
+        if($stmt) {
+            // Vincula os parâmetros (9 strings - 's' repetido 9 vezes)
+            mysqli_stmt_bind_param(
+                $stmt, 
+                "sssssssss", 
+                $nome, 
+                $email, 
+                $senha, 
+                $telefone, 
+                $genero, 
+                $data_nascimento, 
+                $cidade, 
+                $estado, 
+                $endereco
+            );
+
+            // Executa a declaração
+            $executado = mysqli_stmt_execute($stmt);
             
-            // Cria a sessão do usuário
-            $_SESSION['logged_in'] = true;
-            $_SESSION['user_id'] = $novo_id;
-            $_SESSION['user_email'] = $email;
-            $_SESSION['user_name'] = $nome;
-            
-            header('Location: sistema.php');
-            exit();
+            if($executado) {
+                // Busca o último ID inserido
+                $novo_id = mysqli_insert_id($conexao);
+                
+                // Cria a sessão do usuário
+                $_SESSION['logado'] = true;
+                $_SESSION['id_usuario'] = $novo_id;
+                $_SESSION['email_usuario'] = $email;
+                $_SESSION['nome_usuario'] = $nome;
+                
+                header('Location: sistema.php');
+                exit();
+            } else {
+                $erro = mysqli_stmt_error($stmt);
+                $_SESSION['cadastro_erro'] = "Erro na execução: $erro";
+            }
+
+            // Fecha a declaração
+            mysqli_stmt_close($stmt);
         } else {
-            // Tratamento de erro
-            $_SESSION['cadastro_erro'] = "Erro no cadastro!";
-            header('Location: formulario.php');
-            exit();
+            $_SESSION['cadastro_erro'] = "Erro na preparação: " . mysqli_error($conexao);
         }
+
+        // Redireciona em caso de erro
+        header('Location: formulario.php');
+        exit();
     }
 ?>
 

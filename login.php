@@ -1,4 +1,14 @@
 <!-- login.php -->
+<?php
+    session_start(); // Inicia a sessão
+
+    // Verifica se o usuário está logado usando o padrão unificado
+    if(isset($_SESSION['logado']) && $_SESSION['logado'] === true) {
+        header('Location: sistema.php'); // Redireciona para o sistema
+        exit(); // Interrompe a execução
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>

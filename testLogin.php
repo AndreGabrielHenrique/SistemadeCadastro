@@ -10,22 +10,37 @@
         $email = $_POST['email'];
         $senha = $_POST['senha'];
 
-        // Query de autenticação
-        $sql = "SELECT * FROM usuarios WHERE email = '$email' AND senha = '$senha'";
-        $resultado = $conexao->query($sql);
+        // Query de autenticação usando prepared statement
+        $stmt = $conexao->prepare("SELECT id, nome, senha FROM usuarios WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
 
         // Verifica se encontrou resultados
-        if(mysqli_num_rows($resultado) < 1) {
-            unset($_SESSION['email']); // Limpa sessão
-            unset($_SESSION['senha']);
-            header('Location: login.php'); // Redireciona para login
+        if($resultado->num_rows === 1) {
+            $usuario = $resultado->fetch_assoc();
+            
+            // Comparação direta da senha (TEXTO PURO)
+            if($senha === $usuario['senha']) {
+                // Define as variáveis de sessão PADRÃO
+                $_SESSION['logado'] = true;
+                $_SESSION['id_usuario'] = $usuario['id'];
+                $_SESSION['email_usuario'] = $email;
+                $_SESSION['nome_usuario'] = $usuario['nome'];
+                
+                header('Location: sistema.php');
+                exit();
+            }
         }
-        else {
-            $_SESSION['email'] = $email; // Armazena e-mail na sessão
-            $_SESSION['senha'] = $senha; // Armazena senha na sessão
-            header('Location: sistema.php'); // Redireciona para painel
-        }
+
+        // FALHA NA AUTENTICAÇÃO
+        unset($_SESSION['logado']);
+        session_destroy();
+        header('Location: login.php?erro=1');
+        exit();
     }
     else {
-        header('Location: login.php'); // Redireciona se acesso direto
+        header('Location: login.php');
+        exit();
     }
+?>
