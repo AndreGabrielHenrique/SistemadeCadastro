@@ -78,8 +78,10 @@
         body {
             background: linear-gradient(to right, rgb(20, 147, 220), rgb(17, 54, 71)) no-repeat fixed;
             color: white;
-            overflow-y: auto; /* Habilita scroll vertical */
             overflow-x: hidden; /* Desabilita scroll horizontal */
+            display: flex; /* Flexbox para layout */
+            flex-direction: column; /* Layout flexível */
+            min-height: 100vh; /* Garante que o corpo ocupe toda a altura da tela */
         }
         
         /* Estilização da barra de navegação */
@@ -90,8 +92,9 @@
 
         /* Container da tabela com scroll */
         .table-container {
-            height: calc(100vh - 180px); /* Calcula altura dinâmica */
+            height: auto; /* Altura automática para o container */
             overflow: auto; /* Habilita scroll vertical e horizontal */
+            max-height: 75vh; /* Altura máxima para manter a responsividade */
             margin: 20px; /* Margem externa */
 
             /* Esconde a barra de scroll */
@@ -179,6 +182,7 @@
             .table-container {
                 margin: 10px; /* Reduz margem */
                 height: calc(100vh - 160px); /* Ajuste de altura */
+                max-height: 65vh; /* Altura máxima menor para dispositivos móveis */
             }
             
             .box-search {
