@@ -1,2 +1,7 @@
+# Arquivo .gitignore - Define quais arquivos/diretórios o Git deve ignorar
+
+# Ignora arquivos de backup/exportação do banco de dados SQL
 BD.sql
+
+# Ignora arquivo de configuração que contém credenciais sensíveis
 config.php
