@@ -3,5 +3,8 @@
 # Ignora arquivos de backup/exportação do banco de dados SQL
 BD.sql
 
-# Ignora arquivo de configuração que contém credenciais sensíveis
+# Ignora arquivos de configuração que contém credenciais sensíveis
 config.php
+
+# Ignora arquivos de teste de conexão ao banco de dados
+teste_conexao.php
