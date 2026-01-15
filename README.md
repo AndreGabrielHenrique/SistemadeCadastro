@@ -15,13 +15,23 @@ Segurança e observações:
 - Algumas queries ainda concatenam parâmetros diretamente (`excluir.php`, `salvarEdicao.php`) — trocar por prepared statements onde necessário.
 
 Gerar o PDF da documentação:
-- Tente executar o script PowerShell `gerar_pdf.ps1` na raiz do projeto (Windows):
+- Tente executar o script Python `gerar_pdf.py` na raiz do projeto:
 
-  .\gerar_pdf.ps1
+  python gerar_pdf.py
 
-- O script usa `pandoc` para converter `DOCUMENTATION.md` em `DOCUMENTATION.pdf`. Se não houver `pandoc`, siga as instruções exibidas.
+- O script converte automaticamente `DOCUMENTATION.md` em `DOCUMENTATION.pdf`. As dependências serão instaladas automaticamente se necessário.
 
 Arquivos principais:
-- `index.php`, `login.php`, `formulario.php`, `sistema.php`, `editar.php`, `salvarEdicao.php`, `excluir.php`, `logout.php`, `config.php`, `BD.sql`, `scripts.sql`, `testLogin.php`.
+- `index.php`, `login.php`, `formulario.php`, `sistema.php`, `editar.php`, `salvarEdicao.php`, `excluir.php`, `logout.php`, `config.php`, `BD.sql`, `scripts.sql`, `testLogin.php`, `check.php`, `teste_conexao.php`.
+
+## Documentação Completa
+Para uma documentação detalhada e completa do sistema, consulte:
+- `DOCUMENTATION.pdf` — Documentação em formato PDF
+
+## Informações do Projeto
+**Desenvolvido por:** André
+**Versão:** 1.0
+**Data de Criação:** 2025
+**Última Atualização:** Janeiro de 2026
 
 Autor: documentação gerada automaticamente.

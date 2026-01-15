@@ -1,0 +1,7 @@
+// .vscode/settings.json
+{
+    "intelephense.diagnostics.undefinedVariables": false,  // Desativa verificação de variáveis não definidas no Intelephense (extensão PHP do VSCode)
+    "intelephense.environment.phpVersion": "8.2.0",       // Define a versão do PHP para 8.2.0 para compatibilidade de análise
+    "intelephense.files.maxSize": 5000000,                // Define tamanho máximo de arquivo para 5MB para análise
+    "php.validate.executablePath": "C:\\php\\php.exe"     // Caminho para o executável do PHP no Windows
+}
